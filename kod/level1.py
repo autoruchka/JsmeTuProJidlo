@@ -1,6 +1,5 @@
 import os
 
-
 def level1(level_name):
     # gives the path of demo.py
     path = os.path.realpath(__file__)
@@ -18,4 +17,6 @@ def level1(level_name):
         final = 0
         for number in line.split(" "):
             final += int(number)
+        print(final)
 
+level1("level1_2_large.in")
