@@ -20,39 +20,73 @@ def level1(level_name):
 
         moves = [0]
 
-        if abs(pos) >= 9: 
-            for i in range(-5, -1):
-                moves.append(i * -(pos / abs(pos)))
-            ones = abs(pos) - 8
-            for i in range(0, ones):
-                moves.append(1 * (pos / abs(pos)))
-            for i in range(2, 6):
-                moves.append(i * (pos / abs(pos)))
-        elif abs(pos) >= 7:
-            for i in range(-5, -2):
-                moves.append(i * (pos / abs(pos)))
-            for i in range(4, 6):
-                moves.append(i * (pos / abs(pos)))
-        elif abs(pos) >= 5:
-            for i in range(-5, -2):
-                moves.append(i * -(pos / abs(pos)))
-            for i in range(4, 6):
-                moves.append(i * (pos / abs(pos)))
-        elif abs(pos) >= 3:
-            for i in range(-5, -3):
-                moves.append(i * -(pos / abs(pos)))
-            moves.append(5 * (pos / abs(pos)))
-        elif abs(pos) > 1:
-            moves.append(5 * (pos / abs(pos)))
-            moves.append(5 * (pos / abs(pos)))
-        elif abs(pos) == 1:
-            moves.append(5 * (pos / abs(pos)))
+        # pos is the integer you already have
+        s = 1 if pos > 0 else -1
+        a = abs(pos)
+        moves = [0]
+
+        if a >= 9:
+            # 5,4,3,2, then ones, then 2,3,4,5
+            moves += [k * s for k in (5,4,3,2)]
+            ones = a - 8
+            if ones > 0:
+                moves += [1 * s] * ones
+            moves += [k * s for k in (2,3,4,5)]
+
+        elif a >= 7:
+            # 5,4,3 then 4,5
+            moves += [k * s for k in (5,4,3)]
+            moves += [k * s for k in (4,5)]
+
+        elif a == 6:
+            moves += [k * s for k in (5,4,3,3,4,5)]
+
+        elif a >= 5:
+            # 5,4,3 then 4,5
+            moves += [k * s for k in (5,4,3)]
+            moves += [k * s for k in (4,5)]
+
+        elif a == 4:
+            moves += [k * s for k in (5,4,4,5)]
+
+        elif a >= 3:
+            moves += [5 * s]
+
+        elif a > 1:
+            moves += [5 * s, 5 * s]
+
+        elif a == 1:
+            moves += [5 * s]
+
+        moves.append(0)
+
 
         moves.append(0)
         output = open(dir.replace("kod", "vystupy") + "/" + level_name.replace(".in", ".out"), "a")
-        for move in moves:
+        for i, move in enumerate(moves):
+            # skip zeros entirely
+            if move == 0:
+                continue
+
+            # get neighbors
+            prev = moves[i - 1] if i > 0 else None
+            nxt  = moves[i + 1] if i < len(moves) - 1 else None
+
+            # check previous
+            if prev is not None and prev != 0:
+                if (move > 0) != (prev > 0):
+                    print("FAILED")
+
+            # check next
+            if nxt is not None and nxt != 0:
+                if (move > 0) != (nxt > 0):
+                    print("FAILED")
+
             output.write(str(int(move)) + " ")
         output.write("\n")
         output.close()
+
+        if len(moves) >= int(nums[1]):
+            print("FAILED")
 
 level1("level3_2_large.in")
